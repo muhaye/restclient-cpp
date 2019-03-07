@@ -1,11 +1,7 @@
-
 cmake_minimum_required(VERSION 3.10.0)
 
-project(restclient-cpp
-  VERSION 0.5.0
-  DESCRIPTION "REST client for C++"
-  HOMEPAGE_URL "http://code.mrtazz.com/restclient-cpp"
-)
+project(restclient-cpp VERSION 0.5.0)
+
 set(restclient-cpp_VENDOR "d@unwiredcouch.com")
 set(PROJECT_VENDOR "${restclient-cpp_VENDOR}")
 
@@ -71,10 +67,14 @@ configure_file("${CMAKE_CURRENT_BINARY_DIR}/version.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/include/restclient-cpp/version.h")
 target_include_directories(restclient-cpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-target_link_libraries(restclient-cpp
-  PUBLIC CURL::libcurl
-  PUBLIC Threads::Threads
-)
+
+if(WIN32)
+    target_link_libraries(restclient-cpp PUBLIC CURL::libcurl)
+else()
+    target_link_libraries(restclient-cpp ${CURL_LIBRARY_DIRS})
+endif()
+
+target_link_libraries(restclient-cpp PUBLIC Threads::Threads)
 
 set(INCLUDE_INSTALL_DIR "include/restclient-cpp" )
 set(CONFIG_INSTALL_DIR "lib/cmake/restclient-cpp" )
