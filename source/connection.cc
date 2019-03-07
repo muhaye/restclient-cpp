@@ -376,7 +376,16 @@ RestClient::Connection::performCurlRequest(const std::string& uri) {
                      1L);
   }
 
+  curl_easy_setopt(this->curlHandle, CURLOPT_SSL_VERIFYPEER,
+                     0L);
+
+  curl_easy_setopt(this->curlHandle, CURLOPT_SSL_VERIFYHOST,
+                     0L);
+
+
   res = curl_easy_perform(this->curlHandle);
+  printf("-- no verif ssl \n");
+
   if (res != CURLE_OK) {
     switch (res) {
       case CURLE_OPERATION_TIMEDOUT:
@@ -388,8 +397,9 @@ RestClient::Connection::performCurlRequest(const std::string& uri) {
         ret.body = curl_easy_strerror(res);
         break;
       default:
+        printf("-- res code %d\n", res );
         ret.body = "Failed to query.";
-        ret.code = -1;
+        ret.code = res;
     }
   } else {
     int64_t http_code = 0;
